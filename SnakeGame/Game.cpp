@@ -1,6 +1,6 @@
-//This is a frameword to allow you to focus on the game logic.
+//This is a framework to allow you to focus on the game logic.
 //Most of your code will go in three locations. 
-//Function decalrations, game logic in runGame, and the function declarations.
+//Function prototypes, game logic in runGame, and the function declarations.
 
 #include <windows.h>
 #include <conio.h>
@@ -29,6 +29,7 @@ void setcolor(WORD color);
 void txtPlot(point item, unsigned char Color);
 
 //Add function declarations here
+point moveMouse();
 
 
 int main() {
@@ -49,13 +50,16 @@ void runGame() {
     chrono::time_point<chrono::system_clock> currentTime;
     runTime = std::chrono::system_clock::now();
     Sleep(300);
+    srand(time(0));
 
     point playerloc = { 0, 10 };
     point direction = { 1, 0 };
+    point mouse = { 10,10 };
+    vector<point> tail;
     int length = 5;
 
     //Loop to start drawing and playing.
-	//while (keypress != key_ESCAPE) {
+	while (keypress != key_ESCAPE) {
 		
         direction = keyPressed(direction);
         
@@ -65,8 +69,62 @@ void runGame() {
         if (elapsedTime > 0.3 * 1000) {
             runTime = chrono::system_clock::now();
 
+
+
+
+
+
             //Most of your game logic goes here.
 
+            txtPlot(playerloc, 15);
+
+
+            tail.push_back(playerloc);
+
+
+            playerloc.x += direction.x;
+            playerloc.y += direction.y;
+
+            if (playerloc.x > 19 || playerloc.x < 0 || playerloc.y > 19 || playerloc.y < 0) {
+                setcolor(15);
+                gotoxy(1, 20);
+                _cprintf("You lose");
+                keypress = key_ESCAPE;
+
+            }
+
+            if (playerloc.x == mouse.x && playerloc.y == mouse.y) {
+                length += 1;
+                mouse = moveMouse();
+            }
+
+            if (tail.size() > length) {
+                point erase = tail[0];
+                txtPlot(erase, 15);
+                tail.erase(tail.begin());
+            }
+
+            for (int i = 0; i < tail.size() - 1; i++) {
+                if (playerloc.x == tail[i].x && playerloc.y == tail[i].y) {
+                    setcolor(15);
+                    gotoxy(1, 20);
+                    _cprintf("You lose");
+                    keypress = key_ESCAPE;
+                }
+
+
+            }
+
+
+            for (int i = 0; i < tail.size(); i++) {
+                txtPlot(tail[i], 42);
+
+
+            }
+
+            
+
+            txtPlot(mouse, 120);
             txtPlot(playerloc, 31);
             
             setcolor(15);
@@ -77,11 +135,18 @@ void runGame() {
         }
 
 		Sleep(10);
-	//}
+	}
 }
 
 //Put function definitions here.
+point moveMouse() {
+    point temp;
 
+    temp.x = rand() % 20;
+    temp.y = rand() % 20;
+
+    return temp;
+}
 
 
 //These are helper funcitons to capture keyboard and draw to the console.
