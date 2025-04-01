@@ -52,6 +52,15 @@ void runGame() {
     Sleep(300);
     srand(time(0));
 
+    for (int x = -1; x < 20; x++) {
+        txtPlot({ x,-1 }, 73);
+        txtPlot({ x,20 }, 73);
+    }
+    for (int y = -1; y < 20; y++) {
+        txtPlot({ -1,y }, 73);
+        txtPlot({ 20,y }, 73);
+    }
+
     point playerloc = { 0, 10 };
     point direction = { 1, 0 };
     point mouse = { 10,10 };
@@ -190,7 +199,7 @@ void txtPlot(point item, unsigned char Color)
 void gotoxy(int x, int y)
 {
     COORD coord;
-    coord.X = x; coord.Y = y;
+    coord.X = x + 1; coord.Y = y + 1;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
     return;
 }
